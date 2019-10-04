@@ -15,7 +15,10 @@ describe('Bookmarks endpoints', () => {
     app.set('db', db);
   });
 
-  after('disconnect from db', () => db.destroy() );
+  after('disconnect from db', () => {
+    db.destroy();
+    console.log('DB DONE');
+  });
 
   before('clean the table', () => db('bookmarks').truncate() );
 
@@ -36,7 +39,7 @@ describe('Bookmarks endpoints', () => {
       it('should resolve with all bookmarks', () => {
         return supertest(app)
           .get('/bookmarks')
-          .expect(200, testBookmarks)
+          .expect(200, testBookmarks);
       });
 
       it('should resolve with bookmark with certain id', () => {
@@ -57,7 +60,7 @@ describe('Bookmarks endpoints', () => {
   });
 
   context('/POST request', () => {
-    it('creates an article, responds with 201 and the new bookmark', () => {
+    it('creates an new bookmark, responds with 201 and the new bookmark', () => {
       const newBookmark = {
         title: 'Test Post',
         url: 'https://www.imatest.com',
@@ -79,7 +82,39 @@ describe('Bookmarks endpoints', () => {
     });
   });
 
-  context('/DELETE request', () => {
+  describe('DELETE /bookmarks/:id', () => {
+    const testBookmarks = makeBookmarksArray();
 
+    beforeEach('Insert bookmarks', () => {
+      return db
+        .into('bookmarks')
+        .insert(testBookmarks);
+    });
+
+    context('given no bookmarks', () => {
+      it('responds 404 when bookmark does not exist', () => {
+        return supertest(app)
+          .delete('/bookmarks/123')
+          .expect(404, {
+            error: { message: 'bookmark not found'}
+          });
+      });
+    });
+
+    context('Given that there are bookmarks in the database', () => {
+
+      it.skip('Removes the bookmark by ID from the database', () => {
+        const idToRemove = 2;
+        const expectedBookmarks = testBookmarks.filter(bm => bm.id !== idToRemove);
+        return supertest(app)
+          .delete(`/bookmarks/${idToRemove}`)
+          .expect(204)
+          .then (() => {
+            supertest(app)
+              .get('/bookmarks')
+              .expect(expectedBookmarks);
+          });
+      });
+    });
   });
 });

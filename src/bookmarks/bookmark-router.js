@@ -1,9 +1,6 @@
 const express = require('express');
-const uuid = require('uuid/v4');
 const logger = require('../logger');
 const xss = require('xss');
-//const { bookmarks } = require('../store');
-//const { PORT } = require('../config');
 const BookmarksService = require('./bookmarks-service');
 
 const bookmarksRouter = express.Router();
@@ -66,23 +63,24 @@ bookmarksRouter
 
 bookmarksRouter
   .route('/:bookmark_id')
-  .get((req, res, next) => {
-    const { bookmark_id } = req.params;
-    //make sure we found a bookmark
-    console.log(bookmark_id)
-    BookmarksService.getById(req.app.get('db'), bookmark_id)
-      .then (bookmark => {
+  .all((req, res, next) => {
+    BookmarksService.getById(
+      req.app.get('db'),
+      req.params.bookmark_id
+    )
+      .then(bookmark => {
         if (!bookmark) {
-          console.log('get route happened')
-          logger.error(`Bookmark with id ${bookmark_id} not found.`);
-          return res
-            .status(404)
-            .send('Bookmark Not Found');
+          return res.status(404).json({
+            error: { message: `bookmark not found` }
+          });
         }
         res.bookmark = bookmark;
         next();
       })
       .catch(next);
+  })
+  .get((req, res, next) => {
+    res.json(serializeBookmark(res.bookmark));
   })
   .delete((req, res, next) => {
     const { bookmark_id } = req.params;
