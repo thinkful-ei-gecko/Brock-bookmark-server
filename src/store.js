@@ -1,4 +1,4 @@
-const bookmarks = [
+/*const bookmarks = [
   {
     id: 3,
     title: 'kotaku',
@@ -22,4 +22,4 @@ const bookmarks = [
   }
 ];
 
-module.exports = { bookmarks };
+module.exports = { bookmarks };*/

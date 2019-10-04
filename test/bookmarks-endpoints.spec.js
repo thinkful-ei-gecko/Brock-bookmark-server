@@ -22,20 +22,21 @@ describe('Bookmarks endpoints', () => {
   afterEach('cleanup', () => db('bookmarks').truncate() );
 
   context('/GET request', () => {
-    /*it('should return an empty array when no data is present', () => {
+    it('should return an empty array when no data is present', () => {
       const expected = [];
       return supertest(app)
         .get('/bookmarks')
         .expect(200)
         .then( empty => expect(empty.body).to.eql(expected));
-    });*/
+    });
+
     context('/GET requests with data', () => {
       beforeEach('add data to bookmarks test db', () => db.into('bookmarks').insert(testBookmarks) );
 
       it('should resolve with all bookmarks', () => {
         return supertest(app)
           .get('/bookmarks')
-          .expect(200, testBookmarks);
+          .expect(200, testBookmarks)
       });
 
       it('should resolve with bookmark with certain id', () => {
@@ -61,7 +62,7 @@ describe('Bookmarks endpoints', () => {
         title: 'Test Post',
         url: 'https://www.imatest.com',
         description: 'Hello I am a test',
-        rating: '3'
+        rating: 3
       };
 
       return supertest(app)

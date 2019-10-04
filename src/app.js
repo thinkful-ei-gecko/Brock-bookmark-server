@@ -4,9 +4,10 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
+//const { API_TOKEN } = require('./config');
 const bookmarkRouter = require('./bookmarks/bookmark-router');
-const logger = require('./logger');
-const BookmarksService = require('./bookmarks/bookmarks-service');
+//const logger = require('./logger');
+const errorHandler = require('./errorHandler');
 
 const app = express();
 const morganOption = NODE_ENV === 'production' ? 'tiny' : 'common';
@@ -17,16 +18,9 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use('/bookmarks', bookmarkRouter);
+app.use(errorHandler);
 
-app.get('/bookmarks', (req, res, next) => {
-  const knexInstance = req.app.get('db');
-  BookmarksService.getAllBookmarks(knexInstance)
-    .then(bookmarks => {
-      res.json(bookmarks);
-    });
-});
-
-app.use(function validateBearerToken(req, res, next) {
+/*app.use(function validateBearerToken(req, res, next) {
   const apiToken = process.env.API_TOKEN;
   const authToken = req.get('Authorization');
 
@@ -36,6 +30,6 @@ app.use(function validateBearerToken(req, res, next) {
   }
   // move to the next middleware
   next();
-});
+});*/
 
 module.exports = app;
