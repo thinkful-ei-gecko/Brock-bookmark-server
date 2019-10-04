@@ -1,8 +1,8 @@
 const express = require('express');
 const uuid = require('uuid/v4');
-const logger = require('../src/logger');
-const { bookmarks } = require('../src/store');
-const { PORT } = require('../src/config');
+const logger = require('../logger');
+const { bookmarks } = require('../store');
+const { PORT } = require('../config');
 
 const bookmarksRouter = express.Router();
 const bodyParser = express.json();
