@@ -69,7 +69,7 @@ bookmarksRouter
   .get((req, res, next) => {
     const { bookmark_id } = req.params;
     //make sure we found a bookmark
-    console.log(bookmark_id)
+
     BookmarksService.getById(req.app.get('db'), bookmark_id)
       .then (bookmark => {
         if (!bookmark) {
@@ -79,8 +79,8 @@ bookmarksRouter
             .status(404)
             .send('Bookmark Not Found');
         }
-        res.bookmark = bookmark;
-        next();
+
+        res.json(bookmark);
       })
       .catch(next);
   })
